@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ov2slam</name>
+  <version>1.0.0</version>
+  <description>The OV2SLAM package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <maintainer email="maxime.ferrera@gmail.com">Maxime Ferrera</maintainer>
+
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>GPLv3</license>
+
+  <url type="website">https://github.com/ov2slam/ov2slam</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend> roscpp </depend>
+  <depend> std_msgs </depend>
+  <depend> sensor_msgs </depend>
+  <depend> cv_bridge </depend>
+  <depend> image_transport </depend>
+  <depend> tf </depend> 
+  <depend> pcl_ros</depend>-->
+
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>
