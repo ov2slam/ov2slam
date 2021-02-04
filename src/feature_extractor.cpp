@@ -157,8 +157,8 @@ std::vector<cv::Point2f> FeatureExtractor::detectGFTT(const cv::Mat &im, const s
         /// Set the need parameters to find the refined corners
         cv::Size winSize = cv::Size(3,3);
         cv::Size zeroZone = cv::Size(-1,-1);
-        cv::TermCriteria criteria = cv::TermCriteria(CV_TERMCRIT_EPS + 
-                                        CV_TERMCRIT_ITER, 30, 0.01);
+        cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::EPS + 
+                                        cv::TermCriteria::MAX_ITER, 30, 0.01);
 
         cv::cornerSubPix(im, vnewpts, winSize, zeroZone, criteria);
     }
@@ -202,8 +202,8 @@ std::vector<cv::Point2f> FeatureExtractor::detectGFTT(const cv::Mat &im, const s
         /// Set the need parameters to find the refined corners
         cv::Size winSize = cv::Size(3,3);
         cv::Size zeroZone = cv::Size(-1,-1);
-        cv::TermCriteria criteria = cv::TermCriteria(CV_TERMCRIT_EPS + 
-                                        CV_TERMCRIT_ITER, 30, 0.01);
+        cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::EPS + 
+                                        cv::TermCriteria::MAX_ITER, 30, 0.01);
 
         cv::cornerSubPix(im, vmorepts, winSize, zeroZone, criteria);
     }
@@ -428,8 +428,8 @@ std::vector<cv::Point2f> FeatureExtractor::detectSingleScale(const cv::Mat &im, 
         /// Set the need parameters to find the refined corners
         cv::Size winSize = cv::Size(3,3);
         cv::Size zeroZone = cv::Size(-1,-1);
-        cv::TermCriteria criteria = cv::TermCriteria(CV_TERMCRIT_EPS + 
-                                        CV_TERMCRIT_ITER, 30, 0.01);
+        cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::EPS + 
+                                        cv::TermCriteria::MAX_ITER, 30, 0.01);
 
         cv::cornerSubPix(im, vdetectedpx, winSize, zeroZone, criteria);
     }
@@ -558,8 +558,8 @@ std::vector<cv::Point2f> FeatureExtractor::detectGridFAST(const cv::Mat &im, con
         /// Set the need parameters to find the refined corners
         cv::Size winSize = cv::Size(3,3);
         cv::Size zeroZone = cv::Size(-1,-1);
-        cv::TermCriteria criteria = cv::TermCriteria(CV_TERMCRIT_EPS + 
-                                        CV_TERMCRIT_ITER, 30, 0.01);
+        cv::TermCriteria criteria = cv::TermCriteria(cv::TermCriteria::EPS + 
+                                        cv::TermCriteria::MAX_ITER, 30, 0.01);
 
         cv::cornerSubPix(im, vdetectedpx, winSize, zeroZone, criteria);
     }

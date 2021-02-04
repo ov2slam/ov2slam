@@ -37,7 +37,7 @@ endif()
 message(STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}")
 
 # Other packages
-find_package(OpenCV 3 REQUIRED) # OpenCV
+find_package(OpenCV REQUIRED) # OpenCV
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 find_package(OpenMP REQUIRED) # OpenMP
 if (OPENMP_FOUND)

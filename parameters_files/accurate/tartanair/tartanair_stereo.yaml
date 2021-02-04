@@ -72,15 +72,6 @@ force_realtime: 1
 # Estimator Mode
 slam_mode: 1
 
-
-mono: 0
-stereo: 1
-
-force_realtime: 1
-
-# Estimator Mode
-slam_mode: 1
-
 # Loop Closing mode
 buse_loop_closer: 1
 

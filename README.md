@@ -1,6 +1,8 @@
 # OV²SLAM
 ## A Fully Online and Versatile Visual SLAM for Real-Time Applications
 
+**Paper**: [[arxiv]]() / **Videos**: [[video1]](https://www.youtube.com/watch?v=N4LFD4WKHyg), [[video2]](https://www.youtube.com/watch?v=N5O0-0339fU), [[video3]](https://www.youtube.com/watch?v=zNevDT12cKI), [[video4]](https://www.youtube.com/watch?v=xhLZGDdb0FU), [[video5]](https://www.youtube.com/watch?v=ITE1yYA5B78), [[video6]](https://www.youtube.com/watch?v=9D66qpzBvi4)
+
 **Authors:** Maxime Ferrera, Alexandre Eudes, Julien Moras, Martial Sanfourche, Guy Le Besnerais 
 (maxime.ferrera@gmail.com / first.last@onera.fr).
 
@@ -21,11 +23,11 @@ If you use OV²SLAM in your work, please cite it as:
 
 
 ```
-@article{fer2020ov2slam,
+@article{fer2021ov2slam,
       title={{OV$^{2}$SLAM} : A Fully Online and Versatile Visual {SLAM} for Real-Time Applications},
       author={Ferrera, Maxime and Eudes, Alexandre and Moras, Julien and Sanfourche, Martial and {Le Besnerais}, Guy.},
-      journal={Under Review},
-      year={2020}
+      journal={IEEE Robotics and Automation Letters},
+      year={2021}
      }
 ```
 
@@ -37,7 +39,7 @@ Copyright (C) 2020 [ONERA](https://www.onera.fr/en)
 
 ## 1. Prerequisites
 
-The library has been tested with **Ubuntu 16.04 and 18.04**, **ROS Kinetic and Melodic** and **OpenCV 3**.
+The library has been tested with **Ubuntu 16.04 and 18.04**, **ROS Kinetic and Melodic** and **OpenCV 3**.  It should also work with **ROS Noetic and OpenCV 4** but this configuration has not been fully tested.
 
 ### 1.0 C++11 or Higher
 

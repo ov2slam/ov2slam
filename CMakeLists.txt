@@ -33,7 +33,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -march=native")
 
 
 if(WITH_OPENCV_CONTRIB)
-    message(STATUS "Going to use OpenCV contrib! (WITH_OPENCV_CONTRIB : ${WITH_OPENCV_CONTRIB})")
+    message("\nGoing to use OpenCV contrib! (WITH_OPENCV_CONTRIB is set to : ${WITH_OPENCV_CONTRIB}.
+Set it to OFF is OpenCV was not compiled with the opencv_contrib modules)\n")
     add_definitions(-DOPENCV_CONTRIB)
 endif()
 
@@ -69,7 +70,12 @@ endif ( )
 ## System dependencies are found with CMake's conventions
 
 # OpenCV
-find_package(OpenCV 3 REQUIRED)
+find_package(OpenCV REQUIRED)
+
+if(OpenCV_VERSION_MAJOR LESS 3)
+  message( FATAL_ERROR "OpenCV 3 or 4 is required!  Current version : ${OpenCV_VERSION}" )
+endif()
+
 if(OpenCV_VERSION VERSION_LESS "3.3.0")
   message("ENABLE Internal ParallelLoopBodyLambdaWrapper Class definition (OpenCV < 3.3.0)")
   add_definitions(-DOPENCV_LAMBDA_MISSING)
