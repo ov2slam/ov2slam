@@ -1,10 +1,14 @@
 # OV²SLAM
 ## A Fully Online and Versatile Visual SLAM for Real-Time Applications
 
-**Paper**: [[arxiv]]() / **Videos**: [[video1]](https://www.youtube.com/watch?v=N4LFD4WKHyg), [[video2]](https://www.youtube.com/watch?v=N5O0-0339fU), [[video3]](https://www.youtube.com/watch?v=zNevDT12cKI), [[video4]](https://www.youtube.com/watch?v=xhLZGDdb0FU), [[video5]](https://www.youtube.com/watch?v=ITE1yYA5B78), [[video6]](https://www.youtube.com/watch?v=9D66qpzBvi4)
+**Paper**: [[arXiv]](https://arxiv.org/pdf/2102.04060.pdf)
+
+**Videos**: [[video #1]](https://www.youtube.com/watch?v=N4LFD4WKHyg), [[video #2]](https://www.youtube.com/watch?v=N5O0-0339fU), [[video #3]](https://www.youtube.com/watch?v=zNevDT12cKI), [[video #4]](https://www.youtube.com/watch?v=xhLZGDdb0FU), [[video #5]](https://www.youtube.com/watch?v=ITE1yYA5B78), [[video #6]](https://www.youtube.com/watch?v=9D66qpzBvi4)
 
 **Authors:** Maxime Ferrera, Alexandre Eudes, Julien Moras, Martial Sanfourche, Guy Le Besnerais 
 (maxime.ferrera@gmail.com / first.last@onera.fr).
+
+<img src="support_files/ov2slam_readme.gif" width = 512 height = 288 />
 
 **OV²SLAM** is a fully real-time **Visual SLAM** algorithm for **Stereo** and **Monocular** cameras.  A complete SLAM pipeline
 is implemented with a carefully designed multi-threaded architecture allowing to perform Tracking, Mapping, Bundle Adjustment and Loop Closing in real-time.
@@ -15,9 +19,7 @@ Loop Closing is performed through an **Online Bag of Words** method thanks to [i
 offline BoW methods, no pre-trained vocabulary tree is required.  Instead, the vocabulary tree is computed online from the descriptors extracted in the incoming video
 stream, making it always suited to the currently explored environment.
 
-<img src="support_files/ov2slam_readme.gif" width = 512 height = 288 />
-
-### Related Paper:
+## Related Paper:
 
 If you use OV²SLAM in your work, please cite it as:
 
@@ -48,6 +50,7 @@ OV²SLAM makes use of C++11 features and should thus be compiled with a C++11 or
 ### 1.1 ROS
 
 ROS is used for reading the video images through bag files and for visualization purpose in Rviz.
+
 [ROS Installation](http://wiki.ros.org/ROS/Installation)
 
 Make sure that the pcl_ros package is installed :
@@ -72,10 +75,10 @@ or even
 ### 1.3 OpenCV
 
 OpenCV 3 has been used for the development of OV²SLAM, OpenCV 4 might be supported as well but it has not been tested.
-(Optional) The use of BRIEF descriptor requires that **opencv_contrib** was installed.  If it is not the case, ORB will be used instead without scale and rotation invariance properties.
+(Optional) The use of BRIEF descriptor requires that **opencv_contrib** was installed.  If it is not the case, ORB will be used instead without scale and rotation invariance properties (which should be the exact equivalent of BRIEF).
 
-**WATCH OUT** By default the CMakeLists.txt file assumes that opencv_contrib is installed, set the OPENCV_CONTRIB setting to OFF
-in CMakeLists.txt if it is not the case.
+**WATCH OUT** By default the CMakeLists.txt file assumes that opencv_contrib is installed, __set the OPENCV_CONTRIB flag to OFF
+in CMakeLists.txt if it is not the case__.
 
 ### 1.4 iBoW-LCD
 
@@ -97,7 +100,7 @@ Note that [Ceres dependencies](http://ceres-solver.org/installation.html) are st
 
 [OpenGV](https://github.com/laurentkneip/opengv) can be used for Multi-View-Geometry (MVG) operations.  The results reported in the paper were obtained using OpenGV.
 For convenience, if OpenGV is not installed, MVG operations' alternatives are proposed with OpenCV functions.  
-**Note** that the performances might be lower in without OpenGV.
+**Note** that the performances might be lower without OpenGV.
 
 
 ## 2. Installation
@@ -188,9 +191,11 @@ In Kalibr, the inverse transformation is provided (i.e. **T_cam_body**).  Yet, K
 
 Three directories are proposed within the parameter_files folder: _*accurate*_, _*average*_ and _*fast*_.  They all store the parameter files to be used with KITTI, EuRoC and TartanAir.
 
-The _*accurate*_ folder provides the parameters as used in the paper for the full method (i.e. OV²SLAM w. LC).  
-The _*fast*_ folder provides the parameters as used in the paper for the Fast version of OV²SLAM.
-The _*average*_ folder is provided for convenience as an in-between mode.
+* The _*accurate*_ folder provides the parameters as used in the paper for the full method (i.e. OV²SLAM w. LC).  
+
+* The _*fast*_ folder provides the parameters as used in the paper for the Fast version of OV²SLAM.
+
+* The _*average*_ folder is provided for convenience as an in-between mode.
 
 **TODO**: add description of the parameters file
 
