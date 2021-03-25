@@ -45,7 +45,7 @@ public:
         values_[0] = 1./anch_depth;
     }
 
-    InvDepthParametersBlock(const PoseParametersBlock &block) {
+    InvDepthParametersBlock(const InvDepthParametersBlock &block) {
         id_ = block.id_;
         for( size_t i = 0 ; i < ndim_ ; i++ ) {
             values_[i] = block.values_[i];

@@ -40,7 +40,7 @@ public:
         Eigen::Map<Eigen::Vector3d> (values_, 3, 1) = X;
     }
 
-    PointXYZParametersBlock(const PoseParametersBlock &block) {
+    PointXYZParametersBlock(const PointXYZParametersBlock &block) {
         id_ = block.id_;
         for( size_t i = 0 ; i < ndim_ ; i++ ) {
             values_[i] = block.values_[i];

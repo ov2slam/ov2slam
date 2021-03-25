@@ -70,15 +70,11 @@ public:
         // Get and prepare images
         cv_bridge::CvImageConstPtr ptr;
         try {    
-            ptr = cv_bridge::toCvCopy(img_msg);
+            ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::MONO8);
         } 
         catch(cv_bridge::Exception &e)
         {
             ROS_ERROR("\n\n\ncv_bridge exeception: %s\n\n\n", e.what());
-        }
-
-        if( ptr->image.channels() == 3 ) {
-            cv::cvtColor(ptr->image, ptr->image, cv::COLOR_RGB2GRAY);
         }
 
         return ptr->image;
