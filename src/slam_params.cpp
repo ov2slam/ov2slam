@@ -26,15 +26,18 @@
 
 #include "slam_params.hpp"
 
-SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
+SlamParams::SlamParams(const cv::FileStorage& fsSettings)
+{
 
     std::cout << "\nSLAM Parameters are being setup...\n";
 
     // READ THE SETTINGS
-    debug_ = static_cast<int>(fsSettings["debug"]);;
-    log_timings_ = static_cast<int>(fsSettings["log_timings"]);;
+    debug_ = static_cast<int>(fsSettings["debug"]);
+    ;
+    log_timings_ = static_cast<int>(fsSettings["log_timings"]);
+    ;
 
-    mono_ =  static_cast<int>(fsSettings["mono"]);
+    mono_ = static_cast<int>(fsSettings["mono"]);
     stereo_ = static_cast<int>(fsSettings["stereo"]);
 
     bforce_realtime_ = static_cast<int>(fsSettings["force_realtime"]);
@@ -58,7 +61,7 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
     p1l_ = fsSettings["Camera.p1l"];
     p2l_ = fsSettings["Camera.p2l"];
 
-    if( stereo_ ) {
+    if (stereo_) {
         cam_right_topic_.assign(fsSettings["Camera.topic_right"]);
         cam_right_model_.assign(fsSettings["Camera.model_right"]);
 
@@ -81,8 +84,8 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
         fsSettings["body_T_cam0"] >> cvTbc0;
         fsSettings["body_T_cam1"] >> cvTbc1;
 
-        cv::cv2eigen(cvTbc0,Tbc0);
-        cv::cv2eigen(cvTbc1,Tbc1);
+        cv::cv2eigen(cvTbc0, Tbc0);
+        cv::cv2eigen(cvTbc1, Tbc1);
 
         T_left_right_ = Sophus::SE3d(Tbc0.inverse() * Tbc1);
     }
@@ -103,8 +106,8 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
     dmaxquality_ = fsSettings["dmaxquality"];
 
     nmaxdist_ = fsSettings["nmaxdist"];
-    float nbwcells = ceil( (float)img_left_w_ / nmaxdist_ );
-    float nbhcells = ceil( (float)img_left_h_ / nmaxdist_ );
+    float nbwcells = ceil((float)img_left_w_ / nmaxdist_);
+    float nbhcells = ceil((float)img_left_h_ / nmaxdist_);
     nbmaxkps_ = nbwcells * nbhcells;
 
     use_clahe_ = static_cast<int>(fsSettings["use_clahe"]);
@@ -114,7 +117,7 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
     klt_use_prior_ = static_cast<int>(fsSettings["klt_use_prior"]);
 
     btrack_keyframetoframe_ = static_cast<int>(fsSettings["btrack_keyframetoframe"]);
-    
+
     nklt_win_size_ = fsSettings["nklt_win_size"];
     nklt_pyr_lvl_ = fsSettings["nklt_pyr_lvl"];
 
@@ -124,7 +127,6 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
     nmax_iter_ = fsSettings["nmax_iter"];
     fmax_px_precision_ = fsSettings["fmax_px_precision"];
 
-    
     nklt_err_ = fsSettings["nklt_err"];
 
     // Matching th.
@@ -158,13 +160,19 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
     nmin_covscore_ = fsSettings["nmin_covscore"];
 
     // Map Filtering parameters
-    fkf_filtering_ratio_ = fsSettings["fkf_filtering_ratio"]; 
+    fkf_filtering_ratio_ = fsSettings["fkf_filtering_ratio"];
 
     // Apply Full BA?
     do_full_ba_ = static_cast<int>(fsSettings["do_full_ba"]);
+
+    bread_images_from_folder_ = static_cast<int>(fsSettings["read_images_from_folder"]);
+    if (bread_images_from_folder_) {
+        fps = fsSettings["fps"];
+    }
 }
 
-void SlamParams::reset() {
+void SlamParams::reset()
+{
     blocalba_is_on_ = false;
     blc_is_on_ = false;
     bvision_init_ = false;
