@@ -1,0 +1,23 @@
+ARG ROS_DISTRO=noetic
+FROM ov2slam-${ROS_DISTRO}-dependencies
+
+ADD . /ws/src/ov2slam
+
+WORKDIR /ws/src/ov2slam
+
+# dependencies for ceres
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        libgoogle-glog-dev libgflags-dev \
+        libatlas-base-dev \
+        libeigen3-dev  \
+        libsuitesparse-dev  \
+    && sh ./build_thirdparty.sh
+
+# && rm -rf /var/lib/apt/lists/* \
+
+
+
+
+
+
