@@ -5,19 +5,18 @@ ADD . /ws/src/ov2slam
 
 WORKDIR /ws/src/ov2slam
 
-# dependencies for ceres
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libgoogle-glog-dev libgflags-dev \
         libatlas-base-dev \
         libeigen3-dev  \
         libsuitesparse-dev  \
+    && rm -rf /var/lib/apt/lists/* \
     && sh ./build_thirdparty.sh
 
-# && rm -rf /var/lib/apt/lists/* \
+WORKDIR /ws/
 
-
-
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && catkin_make
 
 
 
