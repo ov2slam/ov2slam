@@ -15,32 +15,16 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ros-${ROS_DISTRO}-pcl-ros ros-${ROS_DISTRO}-image-transport \
     libgflags-dev libgoogle-glog-dev \
-    git mc \
+    git \
     && rm -rf /var/lib/apt/lists/*
-   
 
 ADD install_scripts/install_opengv.sh /install_scripts/
-RUN sh /install_scripts/install_opengv.sh /build_dep 91f4b19c73450833a40e463ad3648aae80b3a7f3 \
+RUN sh /install_scripts/install_opengv.sh "/build_dep" 91f4b19c73450833a40e463ad3648aae80b3a7f3 \
     && ($KEEP_SOURCES || rm -r /build_dep)
 
-ADD install_scripts/install_opencv_dependencies.sh /install_scripts/    
-
-
+ADD install_scripts/install_opencv_dependencies.sh install_scripts/install_opencv.sh /install_scripts/    
 RUN apt-get update \ 
     && DEBIAN_FRONTEND=noninteractive sh /install_scripts/install_opencv_dependencies.sh \
-    && ls
-
-
-ADD install_scripts/install_opencv.sh /install_scripts/
-
-RUN ls \
     && sh /install_scripts/install_opencv.sh "/build_dep" "$OPENCV_VERSION" \
-    && ($KEEP_SOURCES || rm -r /build_dep)
-
-RUN ls \
+    && ($KEEP_SOURCES || rm -r /build_dep) \
     && rm -rf /var/lib/apt/lists/*
-
-
-
-
-

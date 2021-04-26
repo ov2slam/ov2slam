@@ -73,7 +73,7 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
         -D BUILD_opencv_rapid=OFF \
         -D BUILD_opencv_rgbd=OFF \
         -D BUILD_opencv_sfm=OFF \
-        -D BUILD_opencv_shape=OFF \
+        -D BUILD_opencv_shape=ON \
         -D BUILD_opencv_stitching=OFF \
         -D BUILD_opencv_structured_light=OFF \
         -D BUILD_opencv_alphamat=OFF \
@@ -82,12 +82,13 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
         -D BUILD_opencv_photo=OFF \
         -D BUILD_opencv_gapi=OFF \
         -D BUILD_opencv_video=ON \
-        -D BUILD_opencv_ml=OFF \
+        -D BUILD_opencv_ml=ONN \
         -D BUILD_opencv_python2=OFF \
         -D WITH_GSTREAMER=OFF \
+        -DENABLE_PRECOMPILED_HEADERS=OFF \
     ..
 
 
-cmake --build . -j`nproc`
-cmake --install .
 
+make -j`nproc`
+make install
