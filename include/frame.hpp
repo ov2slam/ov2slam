@@ -117,7 +117,7 @@ public:
     void updateKeypointDesc(const int lmid, const cv::Mat &desc);
     void updateKeypointAngle(const int lmid, const float angle);
 
-    void updateKeypointId(const int prevlmid, const int newlmid, const bool is3d);
+    bool updateKeypointId(const int prevlmid, const int newlmid, const bool is3d);
 
     void computeStereoKeypoint(const cv::Point2f &pt, Keypoint &kp);
     void updateKeypointStereo(const int lmid, const cv::Point2f &pt);

@@ -29,7 +29,7 @@ set(CMAKE_BUILD_TYPE "Release")
 # If you experience exceptions you can either re-compile
 # opengv and ov2slam without -march=native or re-compile
 # ceres with it
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -march=native")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -march=native -g")
 
 
 if(WITH_OPENCV_CONTRIB)
@@ -123,6 +123,9 @@ catkin_package()
 ## Build ##
 ###########
 
+## add backward
+add_subdirectory(Thirdparty/backward-cpp)
+
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/ov2slam.cpp
@@ -195,7 +198,8 @@ endif (opengv_FOUND)
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/ov2slam_node.cpp)
+add_executable(${PROJECT_NAME}_node src/ov2slam_node.cpp ${BACKWARD_ENABLE})
+add_backward(${PROJECT_NAME}_node)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
