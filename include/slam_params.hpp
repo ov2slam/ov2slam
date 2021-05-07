@@ -96,7 +96,8 @@ public:
     
     bool bdo_stereo_rect_;
     double alpha_;
-    float fepi_th_;
+
+    bool bdo_undist_;
 
     // Keypoints Extraction
     bool use_fast_, use_shi_tomasi_, use_brief_;
@@ -134,6 +135,7 @@ public:
     bool bdo_random; // RANDOMIZE RANSAC?
     float fransac_err_;
     int nransac_iter_;
+    float fepi_th_;
 
     float fmax_reproj_err_;
     bool buse_inv_depth_;

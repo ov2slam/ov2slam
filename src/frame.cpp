@@ -397,6 +397,8 @@ bool Frame::updateKeypointId(const int prevlmid, const int newlmid, const bool i
     upkp.is3d_ = is3d;
     removeKeypointById(prevlmid);
     addKeypoint(upkp);
+
+    return true;
 }
 
 // Compute stereo keypoint from raw pixel position

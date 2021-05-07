@@ -92,6 +92,8 @@ SlamParams::SlamParams(const cv::FileStorage &fsSettings) {
     bdo_stereo_rect_ = static_cast<int>(fsSettings["bdo_stereo_rect"]);
     alpha_ = fsSettings["alpha"];
 
+    bdo_undist_ = static_cast<int>(fsSettings["bdo_undist"]);
+    
     bdo_random = static_cast<int>(fsSettings["bdo_random"]);
 
     use_shi_tomasi_ = static_cast<int>(fsSettings["use_shi_tomasi"]);

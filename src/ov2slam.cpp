@@ -57,6 +57,18 @@ SlamManager::SlamManager(std::shared_ptr<SlamParams> pstate, std::shared_ptr<Ros
         std::cout << "\n SetupStereoCalibration()\n";
         setupStereoCalibration();
     }
+    else if( pslamstate_->mono_ && pslamstate_->bdo_stereo_rect_ ) {
+        pslamstate_->bdo_stereo_rect_ = false;
+    }
+
+    // If no stereo rectification required (i.e. mono config or 
+    // stereo w/o rectification) and image undistortion required
+    if( !pslamstate_->bdo_stereo_rect_ && pslamstate_->bdo_undist_ ) {
+        std::cout << "\n Setup Image Undistortion\n";
+        pcalib_model_left_->setUndistMap(pslamstate_->alpha_);
+        if( pslamstate_->stereo_ )
+            pcalib_model_right_->setUndistMap(pslamstate_->alpha_);
+    }
 
     if( pslamstate_->mono_ ) {
         pcurframe_.reset( new Frame(pcalib_model_left_, pslamstate_->nmaxdist_) );
@@ -226,6 +238,10 @@ void SlamManager::run()
 
 void SlamManager::addNewMonoImage(const double time, cv::Mat &im0)
 {
+    if( pslamstate_->bdo_undist_ ) {
+        pcalib_model_left_->rectifyImage(im0, im0);
+    }
+
     std::lock_guard<std::mutex> lock(img_mutex_);
     qimg_left_.push(im0);
     qimg_time_.push(time);
@@ -235,7 +251,7 @@ void SlamManager::addNewMonoImage(const double time, cv::Mat &im0)
 
 void SlamManager::addNewStereoImages(const double time, cv::Mat &im0, cv::Mat &im1) 
 {
-    if( pslamstate_->bdo_stereo_rect_ ) {
+    if( pslamstate_->bdo_stereo_rect_ || pslamstate_->bdo_undist_ ) {
         pcalib_model_left_->rectifyImage(im0, im0);
         pcalib_model_right_->rectifyImage(im1, im1);
     }
@@ -330,6 +346,12 @@ void SlamManager::setupStereoCalibration()
 
     cv::Rect rectleft, rectright;
 
+    if( pcalib_model_left_->model_ != pcalib_model_right_->model_ )
+    {
+        std::cerr << "\n Left and Right cam have different distortion model.  Cannot use stereo rectifcation!\n";
+        return;
+    }
+
     if( cv::countNonZero(pcalib_model_left_->Dcv_) == 0 && 
         cv::countNonZero(pcalib_model_right_->Dcv_) == 0 &&
         pcalib_model_right_->Tc0ci_.rotationMatrix().isIdentity(1.e-5) )
@@ -338,16 +360,36 @@ void SlamManager::setupStereoCalibration()
         return;
     }
 
-    cv::stereoRectify(
-            pcalib_model_left_->Kcv_, pcalib_model_left_->Dcv_,
-            pcalib_model_right_->Kcv_, pcalib_model_right_->Dcv_,
-            pcalib_model_left_->img_size_, 
-            pcalib_model_right_->Rcv_cic0_, 
-            pcalib_model_right_->tcv_cic0_,
-            Rl, Rr, Pl, Pr, Q, cv::CALIB_ZERO_DISPARITY, pslamstate_->alpha_,
-            pcalib_model_left_->img_size_, 
-            &rectleft, &rectright
-            );
+    if( pcalib_model_left_->model_ == CameraCalibration::Pinhole )
+    {
+        cv::stereoRectify(
+                pcalib_model_left_->Kcv_, pcalib_model_left_->Dcv_,
+                pcalib_model_right_->Kcv_, pcalib_model_right_->Dcv_,
+                pcalib_model_left_->img_size_, 
+                pcalib_model_right_->Rcv_cic0_, 
+                pcalib_model_right_->tcv_cic0_,
+                Rl, Rr, Pl, Pr, Q, cv::CALIB_ZERO_DISPARITY, 
+                pslamstate_->alpha_,
+                pcalib_model_left_->img_size_, 
+                &rectleft, &rectright
+                );
+    }
+    else 
+    {
+        cv::fisheye::stereoRectify(
+                pcalib_model_left_->Kcv_, pcalib_model_left_->Dcv_,
+                pcalib_model_right_->Kcv_, pcalib_model_right_->Dcv_,
+                pcalib_model_left_->img_size_, 
+                pcalib_model_right_->Rcv_cic0_, 
+                pcalib_model_right_->tcv_cic0_,
+                Rl, Rr, Pl, Pr, Q, cv::CALIB_ZERO_DISPARITY, 
+                pcalib_model_left_->img_size_, 
+                pslamstate_->alpha_
+                );
+        
+        rectleft = cv::Rect(0, 0, pcalib_model_left_->img_w_, pcalib_model_left_->img_h_);
+        rectright = cv::Rect(0, 0, pcalib_model_right_->img_w_, pcalib_model_right_->img_h_);
+    }
 
     std::cout << "\n Alpha : " << pslamstate_->alpha_;
 
