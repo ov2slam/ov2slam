@@ -234,7 +234,10 @@ void CameraCalibration::rectifyImage(const cv::Mat &img, cv::Mat &rect) const
 {
     std::lock_guard<std::mutex> lock(intrinsic_mutex_);
     
-    cv::remap(img, rect, undist_map_x_, undist_map_y_, cv::INTER_LINEAR);
+    if( !undist_map_x_.empty() )
+        cv::remap(img, rect, undist_map_x_, undist_map_y_, cv::INTER_LINEAR);
+    else
+        rect = img;
 }
 
 cv::Point2f CameraCalibration::projectCamToImage(const Eigen::Vector3d &pt) const
