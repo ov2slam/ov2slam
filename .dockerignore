@@ -1,0 +1,6 @@
+.git
+.vscode
+.idea
+docker
+Thirdparty/**/build/*
+Thirdparty/**/install/*
