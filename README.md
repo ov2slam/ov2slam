@@ -197,7 +197,83 @@ Three directories are proposed within the parameter_files folder: _*accurate*_, 
 
 * The _*average*_ folder is provided for convenience as an in-between mode.
 
-**TODO**: add description of the parameters file
+<details>
+  <summary> <strong>Parameters details:</strong> </summary>
+    
+    * debug: display debugging information or not
+    * log_timings: log and display main functions timings or not
+
+    * mono: set to 1 if you are in mono config
+    * stereo: set to 1 if you are in stereo config
+
+    * force_realtime: set to 1 if you want to enforce real-time processing (i.e. only process last received image, even if it leads to dropping not yet processed images)
+
+    * slam_mode: must be set to 1
+
+    * buse_loop_closer: set to 1 if you want to use LC
+
+    * bdo_stereo_rect: set to 1 if you want to apply stereo rectification (and use epipolar lines for stereo matching)
+    * alpha: to be set between 0 and 1, 0: rectified images contain only valid pixel / 1: rectified images contain all original pixels (see OpenCV doc for more details)
+
+    * bdo_undist: set to 1 if you want to process undistorted images (the alpha parameter will be used in this case too)
+
+    * finit_parallax: amount of parallax expected for creating new keyframes (should be set between 15. and 40.)
+
+    * use_shi_tomasi: set to 1 to use OpenCV GFTT keypoints detector 
+    * use_fast: set to 1 to use OpenCV FAST keypoints detector
+    * use_brief: set to 1 to extract BRIEF descriptors from detected keypoints (must be set to 1 for apply local map matching, see below)
+    * use_singlescale_detector: set to 1 to use our keypoints detector based on OpenCV cornerMinEigenVal function
+
+    * nmaxdist: size of image cells for extracting keypoints (the bigger the less keypoints you will have)
+
+    * nfast_th: FAST detector threshold (the lower the more sensitive the detector is)
+    * dmaxquality: GFTT and cornerMinEigenVal detector threshold (the lower the more sensitive the detector is)
+
+    * use_clahe: set to 1 to apply CLAHE on processed images
+    * fclahe_val: strength of the CLAHE effect
+
+    * do_klt: must be set to 1
+    * klt_use_prior: if set to 1, keypoints which are observation of 3D Map Points will be initialized with a constant velocity motion model to get a prior before applying KLT tracking
+    * btrack_keyframetoframe: if set to 1, KLT will be applied between previous keyframe and current frame instead of previous frame and current frame (setting it to 0 usually leads to better accuracy)
+    * nklt_win_size: size of the pixels patch to be used in the KLT tracking
+    * nklt_pyr_lvl: number of pyramid levels to be used with KLT in addition the full resolution image (i.e. if set to 1, two levels will be used: half-resolution, full-resolution)
+
+    * nmax_iter: max number of iterations for KLT optimization
+    * fmax_px_precision: maximum precision seeked with KLT (i.e. solution is not varying more than this parameter)
+
+    * fmax_fbklt_dist: maximum allowed error in the backward KLT tracking
+    * nklt_err: maximum allowed error between KLT tracks
+
+    * bdo_track_localmap: set to 1 to use local map tracking using computed descriptors at each keyframe
+
+    * fmax_desc_dist: distance ratio w.r.t. descriptor size for considering a good match (to be set between 0 and 1)
+    * fmax_proj_pxdist: maximum distance in pixels between a map point projection and a keypoint to consider it as a matching candidate
+
+    * doepipolar: set to 1 to apply 2D-2D epipolar based filtering
+    * dop3p : set to 1 to use a P3P-RANSAC pose estimation
+    * bdo_random: set to 1 to randomize RANSAC
+    * nransac_iter: maximum number of RANSAC iterations allowed
+    * fransac_err: maximum error in pixels for RANSAC
+
+    * fmax_reproj_err: maximum reprojection error in pixels when triangulating new map points
+    * buse_inv_depth: set to 1 to use an anchored inverse depth parametrization in BundleAdjustment, set to 0 to use XYZ parametrization
+
+    * robust_mono_th: threshold to be used for the robust Huber cost function in BundleAdjustment
+
+    * use_sparse_schur: set to 1 to use sparse schur (recommanded) (see Ceres doc)
+    * use_dogleg: set to 1 to apply Dogleg optimization (see Ceres doc)
+    * use_subspace_dogleg: set to 1 to apply subspace Dogleg optimization (see Ceres doc)
+    * use_nonmonotic_step: set to 1 to allow nonmonotic steps in optimization (see Ceres doc)
+
+    * apply_l2_after_robust: set to 1 to re-optimize without the Huber function after removal of detected outliers in BundleAdjustment
+
+    * nmin_covscore: minimum covisibility score w.r.t. to current keyframe for adding a keyframe as a state to optimize in BundleAdjustment
+
+    * fkf_filtering_ratio: ratio of co-observed 3D map points by 4 other keyframes to consider a keyframe as redundant and remove it from the map
+
+    * do_full_ba: if set to 1, a final full BundleAdjustment will be applied once the sequence has been entirely processed
+</details>
+
 
 ### Note on "-march=native"
 

@@ -56,7 +56,7 @@ public:
     CameraCalibration(const std::string &model, double fx, double fy, double cx, double cy,
         double k1, double k2, double p1, double p2, double img_w, double img_h);
 
-    void setUndistMap();
+    void setUndistMap(const double alpha);
 
     void setUndistStereoMap(const cv::Mat &R, const cv::Mat &P, const cv::Rect &roi);
 

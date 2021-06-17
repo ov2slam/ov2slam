@@ -804,6 +804,9 @@ void MapManager::mergeMapPoints(const int prevlmid, const int newlmid)
     // 2. Remove prev MP
     // 3. Update new MP and related KF / cur Frame
 
+    std::lock_guard<std::mutex> lock(lm_mutex_);
+    std::lock_guard<std::mutex> lockkf(kf_mutex_);
+
     // Get prev MP to merge into new MP
 
     auto pprevlmit = map_plms_.find(prevlmid);
@@ -817,6 +820,10 @@ void MapManager::mergeMapPoints(const int prevlmid, const int newlmid)
         if( pslamstate_->debug_ )
             std::cout << "\nMergeMapPoints skipping as newlm is null\n";
         return;
+    } else if ( !pnewlmit->second->is3d_ ) {
+        if( pslamstate_->debug_ )
+            std::cout << "\nMergeMapPoints skipping as newlm is not 3d\n";
+        return;
     }
 
     // 1. Get Kf obs + descs from prev MP
@@ -825,18 +832,20 @@ void MapManager::mergeMapPoints(const int prevlmid, const int newlmid)
     std::unordered_map<int, cv::Mat> map_prev_kf_desc_ = pprevlmit->second->map_kf_desc_;
 
     // 3. Update new MP and related KF / cur Frame
-    for( const auto &kfid : setprevkfids ) 
+    for( const auto &pkfid : setprevkfids ) 
     {
         // Get prev KF and update keypoint
-        auto pkfit =  map_pkfs_.find(kfid);
+        auto pkfit =  map_pkfs_.find(pkfid);
         if( pkfit != map_pkfs_.end() ) {
-            pnewlmit->second->addKfObs(kfid);
-            pkfit->second->updateKeypointId(prevlmid, newlmid, pnewlmit->second->is3d_);
-            for( const auto &kid : setnewkfids ) {
-                pkfit->second->addCovisibleKf(kid);
-                auto pcokfit = map_pkfs_.find(kid);
-                if( pcokfit != map_pkfs_.end() ) {
-                    pcokfit->second->addCovisibleKf(kfid);
+            if( pkfit->second->updateKeypointId(prevlmid, newlmid, pnewlmit->second->is3d_) )
+            {
+                pnewlmit->second->addKfObs(pkfid);
+                for( const auto &nkfid : setnewkfids ) {
+                    auto pcokfit = map_pkfs_.find(nkfid);
+                    if( pcokfit != map_pkfs_.end() ) {
+                        pkfit->second->addCovisibleKf(nkfid);
+                        pcokfit->second->addCovisibleKf(pkfid);
+                    }
                 }
             }
         }
@@ -850,16 +859,32 @@ void MapManager::mergeMapPoints(const int prevlmid, const int newlmid)
     // was + update cur Frame's kp ref to new MP
     if( pcurframe_->isObservingKp(prevlmid) ) 
     {
-        setMapPointObs(newlmid);
-        pcurframe_->updateKeypointId(prevlmid, newlmid, pnewlmit->second->is3d_);
+        if( pcurframe_->updateKeypointId(prevlmid, newlmid, pnewlmit->second->is3d_) )
+        {
+            setMapPointObs(newlmid);
+        }
     }
 
-    removeMapPoint(prevlmid);
+    if( pprevlmit->second->is3d_ ) {
+        nblms_--; 
+    }
+
+    // Erase MP and update nb MPs
+    map_plms_.erase( pprevlmit );
+    
+    // Visualization related part for pointcloud obs
+    pcl::PointXYZRGB colored_pt;
+    colored_pt = pcl::PointXYZRGB(0, 0, 0);
+    colored_pt.x = 0.;
+    colored_pt.y = 0.;
+    colored_pt.z = 0.;
+    pcloud_->points[prevlmid] = colored_pt;
 }
 
 // Remove a KF from the map
 void MapManager::removeKeyframe(const int kfid)
 {
+    std::lock_guard<std::mutex> lock(lm_mutex_);
     std::lock_guard<std::mutex> lockkf(kf_mutex_);
 
     // Get KF to remove
@@ -868,8 +893,6 @@ void MapManager::removeKeyframe(const int kfid)
     if( pkfit == map_pkfs_.end() ) {
         return;
     }
-
-    std::lock_guard<std::mutex> lock(lm_mutex_);
 
     // Remove the KF obs from all observed MP
     for( const auto &kp : pkfit->second->getKeypoints() ) {
@@ -926,9 +949,12 @@ void MapManager::removeMapPoint(const int lmid)
             pcurframe_->removeKeypointById(lmid);
         }
 
+        if( plmit->second->is3d_ ) {
+            nblms_--; 
+        }
+
         // Erase MP and update nb MPs
         map_plms_.erase( plmit );
-        nblms_--; 
     }
 
     // Visualization related part for pointcloud obs
@@ -943,8 +969,6 @@ void MapManager::removeMapPoint(const int lmid)
 // Remove a KF obs from a MP
 void MapManager::removeMapPointObs(const int lmid, const int kfid)
 {
-    std::set<int> covkfs_set;
-
     std::lock_guard<std::mutex> lock(lm_mutex_);
     std::lock_guard<std::mutex> lockkf(kf_mutex_);
 
@@ -962,11 +986,6 @@ void MapManager::removeMapPointObs(const int lmid, const int kfid)
         return;
     }
     plmit->second->removeKfObs(kfid);
-
-    covkfs_set = plmit->second->getKfObsSet();
-    if( covkfs_set.empty() ) {
-        return;
-    }
 
     if( pkfit != map_pkfs_.end() ) {
         for( const auto &cokfid : plmit->second->getKfObsSet() ) {

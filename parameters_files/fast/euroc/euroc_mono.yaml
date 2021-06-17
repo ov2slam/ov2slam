@@ -78,6 +78,9 @@ buse_loop_closer: 0
 bdo_stereo_rect: 0
 alpha: 0.
 
+# Undist Image or not
+bdo_undist: 0
+
 # Init / KF px th.
 finit_parallax: 20.
 

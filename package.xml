@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>ov2slam</name>
-  <version>1.0.3</version>
+  <version>1.0.6</version>
   <description>The OV2SLAM package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->

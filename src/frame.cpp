@@ -377,17 +377,17 @@ void Frame::updateKeypointAngle(const int lmid, const float angle)
     it->second.angle_ = angle;
 }
 
-void Frame::updateKeypointId(const int prevlmid, const int newlmid, const bool is3d)
+bool Frame::updateKeypointId(const int prevlmid, const int newlmid, const bool is3d)
 {
     std::unique_lock<std::mutex> lock(kps_mutex_);
 
     if( mapkps_.count(newlmid) ) {
-        return;
+        return false;
     }
 
     auto it = mapkps_.find(prevlmid);
     if( it == mapkps_.end() ) {
-        return;
+        return false;
     }
 
     Keypoint upkp = it->second;
@@ -397,6 +397,8 @@ void Frame::updateKeypointId(const int prevlmid, const int newlmid, const bool i
     upkp.is3d_ = is3d;
     removeKeypointById(prevlmid);
     addKeypoint(upkp);
+
+    return true;
 }
 
 // Compute stereo keypoint from raw pixel position

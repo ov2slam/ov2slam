@@ -74,26 +74,10 @@ CameraCalibration::CameraCalibration(const std::string &model, double fx, double
     roi_mask_ = cv::Mat(img_h, img_w, CV_8UC1, cv::Scalar(0));
     roi_mask_(roi_rect_) = 255;
 
-    // We initially setup the mapping dist -> undist for debugging purpose
-    if( model_ == Pinhole )
-    {
-        cv::Size img_size(img_w_, img_h_);
-        cv::Mat nK;
-        nK = cv::getOptimalNewCameraMatrix(Kcv_, Dcv_, img_size, 1., img_size);
-        cv::initUndistortRectifyMap(Kcv_, Dcv_, cv::Mat(), nK, img_size, CV_32FC1, undist_map_x_, undist_map_y_);
-    }
-    else if ( model_ == Fisheye )
-    {
-        cv::Size img_size(img_w_, img_h_);
-        cv::Mat nK;
-        cv::fisheye::estimateNewCameraMatrixForUndistortRectify(Kcv_, Dcv_, img_size, cv::Mat(), nK);
-        cv::fisheye::initUndistortRectifyMap(Kcv_, Dcv_, cv::Mat(), nK, img_size, CV_32FC1, undist_map_x_, undist_map_y_);        
-    }
-
     Rrectraw_.setIdentity();
 }
 
-void CameraCalibration::setUndistMap() 
+void CameraCalibration::setUndistMap(const double alpha) 
 {
     std::cout << "\n\nComputing the undistortion mapping!\n";
 
@@ -104,12 +88,12 @@ void CameraCalibration::setUndistMap()
     // CV_16SC2 = 11 / CV_32FC1 = 5
     if( model_ == Pinhole )
     {
-        newK = cv::getOptimalNewCameraMatrix(Kcv_, Dcv_, img_size, 1., img_size, &roi_rect_);
+        newK = cv::getOptimalNewCameraMatrix(Kcv_, Dcv_, img_size, alpha, img_size, &roi_rect_);
         cv::initUndistortRectifyMap(Kcv_, Dcv_, cv::Mat(), newK, img_size, CV_32FC1, undist_map_x_, undist_map_y_);
     }
     else if ( model_ == Fisheye )
     {
-        cv::fisheye::estimateNewCameraMatrixForUndistortRectify(Kcv_, Dcv_, img_size, cv::Mat(), newK);
+        cv::fisheye::estimateNewCameraMatrixForUndistortRectify(Kcv_, Dcv_, img_size, cv::Mat(), newK, alpha);
         cv::fisheye::initUndistortRectifyMap(Kcv_, Dcv_, cv::Mat(), newK, img_size, CV_32FC1, undist_map_x_, undist_map_y_);        
     }
     else {
@@ -222,6 +206,16 @@ void CameraCalibration::setupExtrinsic(const Sophus::SE3d &Tc0ci)
     std::cout << "\n Camera Extrinsic : \n\n";
     std::cout << "\n Rc0ci = \n" << Tc0ci_.rotationMatrix();
     std::cout << "\n\n tc0ci = " << Tc0ci_.translation().transpose();
+
+    Eigen::Vector3d tc0ci = Tc0ci_.translation();
+    if( (fabs(tc0ci.x()) > fabs(tc0ci.y()) && tc0ci.x() < 0)
+        || (fabs(tc0ci.x()) < fabs(tc0ci.y()) && tc0ci.y() < 0) )
+    {
+        std::cerr << "\n\n *************************************** \n";
+        std::cerr << "\n \t WARNING! \n";
+        std::cerr << "Left and right camera seem to be inverted! \n";
+        std::cerr << "\n *************************************** \n\n";
+    }
 }
 
 void CameraCalibration::setROIMask(const cv::Rect &roi)
@@ -240,7 +234,10 @@ void CameraCalibration::rectifyImage(const cv::Mat &img, cv::Mat &rect) const
 {
     std::lock_guard<std::mutex> lock(intrinsic_mutex_);
     
-    cv::remap(img, rect, undist_map_x_, undist_map_y_, cv::INTER_LINEAR);
+    if( !undist_map_x_.empty() )
+        cv::remap(img, rect, undist_map_x_, undist_map_y_, cv::INTER_LINEAR);
+    else
+        rect = img;
 }
 
 cv::Point2f CameraCalibration::projectCamToImage(const Eigen::Vector3d &pt) const
