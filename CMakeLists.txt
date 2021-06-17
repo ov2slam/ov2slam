@@ -206,4 +206,5 @@ target_link_libraries(
     ${PROJECT_NAME}_node
     PRIVATE
       ${PROJECT_NAME}
+      stdc++fs
 )
