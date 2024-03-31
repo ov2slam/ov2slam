@@ -646,12 +646,11 @@ void MapManager::addMapPoint(const cv::Scalar &color)
     // Visualization related part for pointcloud obs
     pcl::PointXYZRGB colored_pt;
     if( plm->isobs_ ) {
-        colored_pt = pcl::PointXYZRGB(255, 0, 0);
+        colored_pt.r = 255;
     } else {
-        colored_pt = pcl::PointXYZRGB(plm->color_[0] 
-                                    , plm->color_[0]
-                                    , plm->color_[0]
-                                    );
+        colored_pt.r = plm->color_[0];
+        colored_pt.g = plm->color_[0];
+        colored_pt.b = plm->color_[0];
     }
     colored_pt.x = 0.;
     colored_pt.y = 0.;
@@ -674,12 +673,11 @@ void MapManager::addMapPoint(const cv::Mat &desc, const cv::Scalar &color)
     // Visualization related part for pointcloud obs
     pcl::PointXYZRGB colored_pt;
     if( plm->isobs_ ) {
-        colored_pt = pcl::PointXYZRGB(255, 0, 0);
+        colored_pt.r = 255;
     } else {
-        colored_pt = pcl::PointXYZRGB(plm->color_[0] 
-                                    , plm->color_[0]
-                                    , plm->color_[0]
-                                    );
+        colored_pt.r = plm->color_[0];
+        colored_pt.g = plm->color_[0];
+        colored_pt.b = plm->color_[0];
     }
     colored_pt.x = 0.;
     colored_pt.y = 0.;
@@ -752,12 +750,11 @@ void MapManager::updateMapPoint(const int lmid, const Eigen::Vector3d &wpt, cons
     // Visualization related part for pointcloud obs
     pcl::PointXYZRGB colored_pt;
     if(plmit->second->isobs_ ) {
-        colored_pt = pcl::PointXYZRGB(255, 0, 0);
+        colored_pt.r = 255;
     } else {
-        colored_pt = pcl::PointXYZRGB(plmit->second->color_[0] 
-                                    , plmit->second->color_[0]
-                                    , plmit->second->color_[0]
-                                    );
+        colored_pt.r = plmit->second->color_[0];
+        colored_pt.g = plmit->second->color_[0];
+        colored_pt.b = plmit->second->color_[0];
     }
     colored_pt.x = wpt.x();
     colored_pt.y = wpt.y();
@@ -874,7 +871,6 @@ void MapManager::mergeMapPoints(const int prevlmid, const int newlmid)
     
     // Visualization related part for pointcloud obs
     pcl::PointXYZRGB colored_pt;
-    colored_pt = pcl::PointXYZRGB(0, 0, 0);
     colored_pt.x = 0.;
     colored_pt.y = 0.;
     colored_pt.z = 0.;
@@ -959,7 +955,6 @@ void MapManager::removeMapPoint(const int lmid)
 
     // Visualization related part for pointcloud obs
     pcl::PointXYZRGB colored_pt;
-    colored_pt = pcl::PointXYZRGB(0, 0, 0);
     colored_pt.x = 0.;
     colored_pt.y = 0.;
     colored_pt.z = 0.;
@@ -1039,10 +1034,9 @@ void MapManager::removeObsFromCurFrameById(const int lmid)
     plmit->second->isobs_ = false;
 
     // Update MP color
-    colored_pt = pcl::PointXYZRGB(plmit->second->color_[0] 
-                                , plmit->second->color_[0]
-                                , plmit->second->color_[0]
-                                );
+    colored_pt.r = plmit->second->color_[0];
+    colored_pt.g = plmit->second->color_[0];
+    colored_pt.b = plmit->second->color_[0];
                                 
     colored_pt.x = pcloud_->points.at(lmid).x;
     colored_pt.y = pcloud_->points.at(lmid).y;
@@ -1071,7 +1065,7 @@ bool MapManager::setMapPointObs(const int lmid)
     plmit->second->isobs_ = true;
 
     // Update MP color
-    colored_pt = pcl::PointXYZRGB(200, 0, 0);
+    colored_pt.r = 200;
     colored_pt.x = pcloud_->points.at(lmid).x;
     colored_pt.y = pcloud_->points.at(lmid).y;
     colored_pt.z = pcloud_->points.at(lmid).z;
