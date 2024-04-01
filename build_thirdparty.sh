@@ -9,7 +9,7 @@ cd Thirdparty/obindex2
 mkdir build
 cd build/
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j4
+make -j4 install
 cd ../../..
 
 echo ""
@@ -21,7 +21,7 @@ cd Thirdparty/ibow_lcd
 mkdir build
 cd build/
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j4
+make -j4 install
 cd ../../..
 
 echo ""
