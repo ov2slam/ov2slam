@@ -7,12 +7,12 @@ option(EnableTesting "EnableTesting" OFF)
 # Setting the flags for profiling information or not
 if(CMAKE_BUILD_TYPE MATCHES Release)
     message(STATUS "Setting Release options")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native")
 elseif(CMAKE_BUILD_TYPE MATCHES Debug)
     message(STATUS "Setting Debug options")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O1 -pg")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O1 -pg")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O1 -pg -march=native")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O1 -pg -march=native")
 endif()
 
 # Set the C++ standard
