@@ -18,6 +18,7 @@ WORKDIR /ws/src/ov2slam/Thirdparty
 RUN git clone https://gitlab.com/libeigen/eigen.git
 RUN git clone https://github.com/opencv/opencv.git
 RUN git clone https://github.com/opencv/opencv_contrib.git
+RUN git clone https://github.com/laurentkneip/opengv.git
 
 ##############
 ### Eigen3 ###
@@ -109,6 +110,14 @@ RUN mkdir build install && cd build \
         -D ENABLE_PRECOMPILED_HEADERS=OFF \
     && make -j`nproc` install
 
+##############
+### OpenGV ###
+##############
+WORKDIR /ws/src/ov2slam/Thirdparty/opengv
+RUN mkdir build && cd build \
+    && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=14 \
+    && make -j`nproc` install
+
 ADD ./Thirdparty /ws/src/ov2slam/Thirdparty
 
 ##############
@@ -132,7 +141,7 @@ RUN apt-get update \
 
 WORKDIR /ws/src/ov2slam/Thirdparty/ceres-solver
 RUN mkdir build install && cd build/ \
-    && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=14 \
+    && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=native" -DCMAKE_CXX_STANDARD=14 -DBUILD_EXAMPLES=OFF \
     && make -j`nproc` install
 
 ################
