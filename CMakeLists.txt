@@ -47,7 +47,7 @@ endif (Eigen3_FOUND)
 ########
 # OpenGV
 ########
-find_package(opengv REQUIRED)
+find_package(opengv)
 
 if (opengv_FOUND)
   message(STATUS "Found Opengv lib : ${opengv_INCLUDE_DIR} - ${opengv_DIR}")
@@ -75,8 +75,8 @@ endif (Sophus_FOUND)
 ##########
 # iBOW-LCD
 ##########
-find_package(obindex2 REQUIRED)
-find_package(lcdetector REQUIRED)
+find_package(obindex2)
+find_package(lcdetector)
 
 set(WITH_IBOW_LCD OFF)
 
@@ -133,18 +133,34 @@ target_include_directories(${PROJECT_NAME}
   PRIVATE
     ${PROJECT_SOURCE_DIR}/include/
     ${PROJECT_SOURCE_DIR}/include/ceres_parametrization/
-    ${PROJECT_SOURCE_DIR}/thirdparty/obindex2/lib/include/
-    ${PROJECT_SOURCE_DIR}/thirdparty/ibow_lcd/include/   # should be found by cmake
 )
 
 target_link_libraries(${PROJECT_NAME}
   Eigen3::Eigen
   Sophus::Sophus
   Ceres::ceres
-  opengv
   ${OpenCV_LIBRARIES}
-  lcdetector::lcdetector
 )
+
+if (lcdetector_FOUND)
+  target_include_directories(
+    ${PROJECT_NAME}
+      PRIVATE
+      ${PROJECT_SOURCE_DIR}/thirdparty/obindex2/lib/include/
+      ${PROJECT_SOURCE_DIR}/thirdparty/ibow_lcd/include/   # should be found by cmake
+  )
+  target_link_libraries(
+    ${PROJECT_NAME}
+      lcdetector::lcdetector
+  )
+endif (lcdetector_FOUND)
+
+if (opengv_FOUND)
+  target_link_libraries(
+    ${PROJECT_NAME}
+      opengv
+  )
+endif (opengv_FOUND)
 
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
@@ -179,16 +195,26 @@ target_include_directories(${PROJECT_NAME}_node
   PRIVATE
     ${PROJECT_SOURCE_DIR}/include/
     ${PROJECT_SOURCE_DIR}/include/ceres_parametrization/
-    ${PROJECT_SOURCE_DIR}/thirdparty/obindex2/lib/include/
-    ${PROJECT_SOURCE_DIR}/thirdparty/ibow_lcd/include/   # should be found by cmake
 )
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
-  obindex2::obindex2
-  lcdetector::lcdetector
 )
+
+if (lcdetector_FOUND)
+  target_include_directories(
+    ${PROJECT_NAME}_node
+      PRIVATE
+      ${PROJECT_SOURCE_DIR}/thirdparty/obindex2/lib/include/
+      ${PROJECT_SOURCE_DIR}/thirdparty/ibow_lcd/include/   # should be found by cmake
+  )
+  target_link_libraries(
+    ${PROJECT_NAME}_node
+      obindex2::obindex2
+      lcdetector::lcdetector
+  )
+endif (lcdetector_FOUND)
 
 install(TARGETS
   ${PROJECT_NAME}_node
