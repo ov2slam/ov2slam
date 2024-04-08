@@ -29,7 +29,7 @@
 #include <mutex>
 #include <unordered_map>
 
-#include <pcl_ros/point_cloud.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include "slam_params.hpp"
 #include "frame.hpp"

@@ -30,16 +30,16 @@
 #include <mutex>
 #include <queue>
 
-#include <ros/ros.h>
-#include <ros/console.h>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 
-#include <image_transport/image_transport.h>
-#include <image_transport/subscriber_filter.h>
+#include <image_transport/image_transport.hpp>
+#include <image_transport/subscriber_filter.hpp>
 
-#include <sensor_msgs/CameraInfo.h>
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/image_encodings.h>
-#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/msg/camera_info.hpp>
+#include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/image_encodings.hpp>
+#include <sensor_msgs/msg/imu.hpp>
 
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/core.hpp>
@@ -55,17 +55,17 @@ public:
         std::cout << "\nSensors Grabber is created...\n";
     }
 
-    void subLeftImage(const sensor_msgs::ImageConstPtr &image) {
+    void subLeftImage(const sensor_msgs::msg::Image &image) {
         std::lock_guard<std::mutex> lock(img_mutex);
         img0_buf.push(image);
     }
 
-    void subRightImage(const sensor_msgs::ImageConstPtr &image) {
+    void subRightImage(const sensor_msgs::msg::Image &image) {
         std::lock_guard<std::mutex> lock(img_mutex);
         img1_buf.push(image);
     }
 
-    cv::Mat getGrayImageFromMsg(const sensor_msgs::ImageConstPtr &img_msg)
+    cv::Mat getGrayImageFromMsg(const sensor_msgs::msg::Image &img_msg)
     {
         // Get and prepare images
         cv_bridge::CvImageConstPtr ptr;
@@ -74,7 +74,7 @@ public:
         } 
         catch(cv_bridge::Exception &e)
         {
-            ROS_ERROR("\n\n\ncv_bridge exeception: %s\n\n\n", e.what());
+            RCLCPP_ERROR(rclcpp::get_logger("cv_bridge_logger"), "\n\n\ncv_bridge exeception: %s\n\n\n", e.what());
         }
 
         return ptr->image;
@@ -96,8 +96,8 @@ public:
 
                 if (!img0_buf.empty() && !img1_buf.empty())
                 {
-                    double time0 = img0_buf.front()->header.stamp.toSec();
-                    double time1 = img1_buf.front()->header.stamp.toSec();
+                    double time0 = rclcpp::Time( img0_buf.front().header.stamp ).seconds();
+                    double time1 = rclcpp::Time( img1_buf.front().header.stamp ).seconds();
 
                     // sync tolerance
                     if(time0 < time1 - 0.015)
@@ -131,7 +131,7 @@ public:
 
                 if ( !img0_buf.empty() )
                 {
-                    double time = img0_buf.front()->header.stamp.toSec();
+                    double time = rclcpp::Time( img0_buf.front().header.stamp ).seconds();
                     image0 = getGrayImageFromMsg(img0_buf.front());
                     img0_buf.pop();
 
@@ -148,8 +148,8 @@ public:
         std::cout << "\n Bag reader SyncProcess thread is terminating!\n";
     }
 
-    std::queue<sensor_msgs::ImageConstPtr> img0_buf;
-    std::queue<sensor_msgs::ImageConstPtr> img1_buf;
+    std::queue<sensor_msgs::msg::Image> img0_buf;
+    std::queue<sensor_msgs::msg::Image> img1_buf;
     std::mutex img_mutex;
     
     SlamManager *pslam_;
@@ -159,7 +159,7 @@ public:
 int main(int argc, char** argv)
 {
     // Init the node
-    ros::init(argc, argv, "ov2slam_node");
+    rclcpp::init(argc, argv);
 
     if(argc < 2)
     {
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
 
     std::cout << "\nLaunching OV²SLAM...\n\n";
 
-    ros::NodeHandle nh("~");
+    auto node = rclcpp::Node::make_shared("ov2slam_node");
 
     // Load the parameters
     std::string parameters_file = argv[1];
@@ -189,7 +189,7 @@ int main(int argc, char** argv)
 
     // Create the ROS Visualizer
     std::shared_ptr<RosVisualizer> prosviz;
-    prosviz.reset( new RosVisualizer(nh) );
+    prosviz.reset( new RosVisualizer(node) );
 
     // Setting up the SLAM Manager
     SlamManager slam(pparams, prosviz);
@@ -201,14 +201,14 @@ int main(int argc, char** argv)
     SensorsGrabber sb(&slam);
 
     // Create callbacks according to the topics set in the parameters file
-    ros::Subscriber subleft = nh.subscribe(fsSettings["Camera.topic_left"], 2, &SensorsGrabber::subLeftImage, &sb);
-    ros::Subscriber subright = nh.subscribe(fsSettings["Camera.topic_right"], 2, &SensorsGrabber::subRightImage, &sb);
+    auto subleft = node->create_subscription<sensor_msgs::msg::Image>(fsSettings["Camera.topic_left"], 2, [&sb](const sensor_msgs::msg::Image &image){return sb.subLeftImage(image);});
+    auto subright = node->create_subscription<sensor_msgs::msg::Image>(fsSettings["Camera.topic_right"], 2, [&sb](const sensor_msgs::msg::Image &image){return sb.subRightImage(image);});
 
     // Start a thread for providing new measurements to the SLAM
     std::thread sync_thread(&SensorsGrabber::sync_process, &sb);
 
     // ROS Spin
-    ros::spin();
+    rclcpp::spin(node);
 
     // Request Slam Manager thread to exit
     slam.bexit_required_ = true;

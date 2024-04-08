@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>ov2slam</name>
-  <version>1.0.6</version>
+  <version>2.0.0</version>
   <description>The OV2SLAM package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
@@ -15,17 +15,19 @@
 
   <url type="website">https://github.com/ov2slam/ov2slam</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend> roscpp </depend>
+  <depend> rclcpp </depend>
   <depend> std_msgs </depend>
   <depend> sensor_msgs </depend>
+  <depend> visualization_msgs </depend>
   <depend> cv_bridge </depend>
   <depend> image_transport </depend>
-  <depend> tf </depend> 
-  <depend> pcl_ros</depend>-->
+  <depend> tf2 </depend>
+  <depend> tf2_ros </depend>
+  <depend> pcl_conversions </depend>
 
   <export>
-    <!-- Other tools can request additional information be placed here -->
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

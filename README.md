@@ -41,7 +41,7 @@ Copyright (C) 2020 [ONERA](https://www.onera.fr/en)
 
 ## 1. Prerequisites
 
-The library has been tested with **Ubuntu 16.04 and 18.04**, **ROS Kinetic and Melodic** and **OpenCV 3**.  It should also work with **ROS Noetic and OpenCV 4** but this configuration has not been fully tested.
+The library has been tested with **Ubuntu 22.04**, **ROS2 Humble** and **OpenCV 4**.
 
 ### 1.0 C++11 or Higher
 
@@ -69,12 +69,12 @@ or even
 
 ### 1.2 Eigen3
 
-[Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page) is used throughout OV²SLAM.  It should work with version >= 3.3.0, lower versions have not been tested.
+[Eigen3](http://eigen.tuxfamily.org/index.php?title=Main_Page) is used throughout OV²SLAM.  It should work with version >= 3.3.0 and <= 3.4.0, lower versions have not been tested.
 
 
 ### 1.3 OpenCV
 
-OpenCV 3 has been used for the development of OV²SLAM, OpenCV 4 might be supported as well but it has not been tested.
+OpenCV 3 has been used for the development of OV²SLAM, OpenCV 4 is supported and it has been tested in ROS2 implementation.
 (Optional) The use of BRIEF descriptor requires that **opencv_contrib** was installed.  If it is not the case, ORB will be used instead without scale and rotation invariance properties (which should be the exact equivalent of BRIEF).
 
 **WATCH OUT** By default the CMakeLists.txt file assumes that opencv_contrib is installed, __set the OPENCV_CONTRIB flag to OFF
@@ -82,8 +82,7 @@ in CMakeLists.txt if it is not the case__.
 
 ### 1.4 iBoW-LCD
 
-A modified version of [iBoW-LCD](https://github.com/emiliofidalgo/ibow-lcd) is included in the Thirdparty folder.  It has been turned into a shared lib and
-is not a catkin package anymore.  Same goes for [OBIndex2](https://github.com/emiliofidalgo/obindex2), the required dependency for iBoW-LCD.
+A modified version of [iBoW-LCD](https://github.com/emiliofidalgo/ibow-lcd) is included in the Thirdparty folder. It has been turned into a library and is not a catkin package anymore. Same goes for [OBIndex2](https://github.com/emiliofidalgo/obindex2), the required dependency for iBoW-LCD.
 Check the lcdetector.h and lcdetector.cc files to see the modifications w.r.t. to the original code.
 
 ### 1.5 Sophus
@@ -119,13 +118,13 @@ Clone the git repository in your catkin workspace:
 For convenience we provide a script to build the Thirdparty libs:
 
 ```
-    cd ~/catkin_ws/src/ov2slam
+    cd ~/ws/src/ov2slam
     chmod +x build_thirdparty.sh
     ./build_thirdparty.sh
 ```
 
-**WATCH OUT** By default, the script builds obindex2, ibow-lcd, sophus and ceres.  If you want to use your own version of Sophus or Ceres 
-you can comment the related lines in the script.  Yet, about Ceres, as OV²SLAM is by default compiled with the "-march=native" flag, the 
+**WATCH OUT** By default, the script builds obindex2, ibow-lcd, sophus and ceres. If you want to use your own version of Sophus or Ceres 
+you can comment the related lines in the script. Yet, about Ceres, as OV²SLAM is by default compiled with the "-march=native" flag, the 
 Ceres lib linked to OV²SLAM must be compiled with this flag as well, which is not the default case (at least since Ceres 2.0).  The _*build_thirdparty.sh*_ script ensures that Ceres builds with the "-march=native" flag.
 
 If you are not interested in the Loop Closing feature of OV²SLAM, you can also comment the lines related to obindex2 and ibow-lcd.
@@ -148,17 +147,17 @@ If you are not interested in the Loop Closing feature of OV²SLAM, you can also 
 Build OV²SLAM package with your favorite catkin tool:
 
 ```
-    cd ~/catkin_ws/src/ov2slam
+    cd ~/ws/src/ov2slam
     catkin build --this
-    source ~/catkin_ws/devel/setup.bash
+    source ~/ws/install/setup.bash
 ```
 
 OR
 
 ```
-    cd ~/catkin_ws/
+    cd ~/ws/
     catkin_make --pkg ov2slam
-    source ~/catkin_ws/devel/setup.bash
+    source ~/ws/install/setup.bash
 ```
 
 ## 3. Usage
@@ -166,7 +165,7 @@ OR
 Run OV²SLAM using:
 
 ```
-    rosrun ov2slam ov2slam_node parameter_file.yaml
+    ros2 run ov2slam ov2slam_node parameter_file.yaml
 ```
 
 Visualize OV²SLAM outputs in Rviz by loading the provided configuration file: ov2slam_visualization.rviz. 
