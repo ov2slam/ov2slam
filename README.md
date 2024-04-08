@@ -8,6 +8,12 @@
 **Authors:** Maxime Ferrera, Alexandre Eudes, Julien Moras, Martial Sanfourche, Guy Le Besnerais 
 (maxime.ferrera@gmail.com / first.last@onera.fr).
 
+---
+
+**April 2024 update**: A ROS2 branch of OV2SLAM is now available [here](https://github.com/ov2slam/ov2slam/tree/ros2) thanks to [@MatPiech](https://github.com/MatPiech)
+
+---
+
 <img src="support_files/ov2slam_readme.gif" width = 512 height = 288 />
 
 **OV²SLAM** is a fully real-time **Visual SLAM** algorithm for **Stereo** and **Monocular** cameras.  A complete SLAM pipeline
