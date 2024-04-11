@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+    Launch file to run with a rosbag and rviz
+    Example:
+        roslaunch ov2slam ov2slam.launch bag:=`realpath kitti_2011_09_26_drive_0002_synced.bag` config:=`realpath kitti_00-02.yaml`
+-->
+<launch>
+    <arg name="bag" default=""/>
+    <arg name="stream_rate" default="1.0"/>
+    <arg name="visualize" default="true"/>
+    <arg name="config" default="$(find ov2slam)/parameters_files/accurate/kitti/kitti_00-02.yaml"/>
+
+    <node pkg="rosbag" type="play" name="player" required="true" args="$(arg bag) --rate $(arg stream_rate)" if="$(eval bag != '')"/>
+
+    <node pkg="ov2slam" type="ov2slam_node" name="ov2slam_node" output="screen" args="$(arg config)" required="true"/>
+
+    <group if="$(arg visualize)">
+        <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ov2slam)/ov2slam_visualization.rviz"/>
+    </group>
+</launch>
