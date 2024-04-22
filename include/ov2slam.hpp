@@ -25,13 +25,12 @@
 */
 #pragma once
 
-
-#include <vector>
-#include <queue>
 #include <mutex>
+#include <queue>
+#include <vector>
 
-#include "slam_params.hpp"
 #include "ros_visualizer.hpp"
+#include "slam_params.hpp"
 
 #include "logger.hpp"
 
@@ -39,11 +38,11 @@
 #include "feature_extractor.hpp"
 #include "feature_tracker.hpp"
 
+#include "estimator.hpp"
 #include "frame.hpp"
 #include "map_manager.hpp"
-#include "visual_front_end.hpp"
 #include "mapper.hpp"
-#include "estimator.hpp"
+#include "visual_front_end.hpp"
 
 class SlamManager {
 
@@ -54,14 +53,14 @@ public:
 
     void run();
 
-    bool getNewImage(cv::Mat &iml, cv::Mat &imr, double &time);
+    bool getNewImage(cv::Mat& iml, cv::Mat& imr, double& time);
 
-    void addNewStereoImages(const double time, cv::Mat &im0, cv::Mat &im1);
-    void addNewMonoImage(const double time, cv::Mat &im0);
+    void addNewStereoImages(const double time, cv::Mat& im0, cv::Mat& im1);
+    void addNewMonoImage(const double time, cv::Mat& im0);
 
     void setupCalibration();
     void setupStereoCalibration();
-    
+
     void reset();
 
     void writeResults();
@@ -69,23 +68,28 @@ public:
     void writeFullTrajectoryLC();
 
     void visualizeAtFrameRate(const double time);
-    void visualizeFrame(const cv::Mat &imleft, const double time);
+    void visualizeFrame(const cv::Mat& imleft, const double time);
     void visualizeVOTraj(const double time);
 
     void visualizeAtKFsRate(const double time);
     void visualizeCovisibleKFs(const double time);
     void visualizeFullKFsTraj(const double time);
-    
+
     void visualizeFinalKFsTraj();
+
+    void setFilenamesTimestamps(std::vector<std::string>& lfilenames, std::vector<std::string>& rfilenames, std::vector<float>& timestamps);
 
     int frame_id_ = -1;
     bool bnew_img_available_ = false;
 
     bool bexit_required_ = false;
     bool bis_on_ = false;
-    
+
     bool bframe_viz_ison_ = false;
     bool bkf_viz_ison_ = false;
+
+    std::vector<std::string> vlfilenames_, vrfilenames_;
+    std::vector<float> vltimestamps_;
 
     std::shared_ptr<SlamParams> pslamstate_;
     std::shared_ptr<RosVisualizer> prosviz_;

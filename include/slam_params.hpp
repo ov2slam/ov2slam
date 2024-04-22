@@ -25,10 +25,9 @@
 */
 #pragma once
 
-
+#include <chrono>
 #include <iostream>
 #include <string>
-#include <chrono>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -46,9 +45,9 @@ class SlamParams {
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    SlamParams() {}
-    
-    SlamParams(const cv::FileStorage &fsSettings);
+    SlamParams() { }
+
+    SlamParams(const cv::FileStorage& fsSettings);
 
     void reset();
 
@@ -61,7 +60,8 @@ public:
     bool bvision_init_ = false;
     bool breset_req_ = false;
     bool bforce_realtime_ = false;
-
+    bool bread_images_from_folder_ = false;
+    float fps;
     //=====================================================
     // Variables relative to the setup used for the SLAM
     //=====================================================
@@ -93,7 +93,7 @@ public:
     int lckfid_ = -1;
 
     float finit_parallax_;
-    
+
     bool bdo_stereo_rect_;
     double alpha_;
 
@@ -102,7 +102,7 @@ public:
     // Keypoints Extraction
     bool use_fast_, use_shi_tomasi_, use_brief_;
     bool use_singlescale_detector_;
-    
+
     int nfast_th_;
     int nbmaxkps_, nmaxdist_;
     double dmaxquality_;
@@ -125,7 +125,7 @@ public:
 
     // Matching th.
     bool bdo_track_localmap_;
-    
+
     float fmax_desc_dist_;
     float fmax_proj_pxdist_;
 
